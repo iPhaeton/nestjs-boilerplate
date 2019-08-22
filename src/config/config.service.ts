@@ -12,7 +12,6 @@ export class ConfigService {
   }
 
   private validateInput(envConfig: EnvConfig): EnvConfig {
-    console.log(envConfig)
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       DB_HOSTNAME: Joi.string().required(),
       DB_PORT: Joi.number().required(),
