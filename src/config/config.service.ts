@@ -1,17 +1,17 @@
 import * as dotenv from 'dotenv';
 import * as Joi from '@hapi/joi';
 import * as fs from 'fs';
-import {EnvConfig} from './config.types';
+import {EnvConfig, ParsedEnvConfig} from './config.types';
 
 export class ConfigService {
-  private readonly envConfig: { [key: string]: string };
+  private readonly envConfig: ParsedEnvConfig;
 
   constructor(filePath: string) {
     const config = dotenv.parse(fs.readFileSync(filePath));
     this.envConfig = this.validateInput(config);
   }
 
-  private validateInput(envConfig: EnvConfig): EnvConfig {
+  private validateInput(envConfig: EnvConfig): ParsedEnvConfig {
     const envVarsSchema: Joi.ObjectSchema = Joi.object({
       DB_HOSTNAME: Joi.string().required(),
       DB_PORT: Joi.number().required(),
@@ -30,7 +30,27 @@ export class ConfigService {
     return validatedEnvConfig;
   }
 
-  get(key: string): string {
+  get(key: string): string | number {
     return this.envConfig[key];
+  }
+
+  getDbHostname(): string {
+    return this.get('DB_HOSTNAME') as string;
+  }
+
+  getDbPort(): number {
+    return this.get('DB_PORT') as number;
+  }
+
+  getDbUsername(): string {
+    return this.get('DB_USERNAME') as string;
+  }
+
+  getDbPassword(): string {
+    return this.get('DB_PASSWORD') as string;
+  }
+
+  getDbName(): string {
+    return this.get('DB_NAME') as string;
   }
 }
