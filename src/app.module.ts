@@ -5,9 +5,7 @@ import { ConfigModule } from './config/config.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from './config/config.service';
 import { Connection } from 'typeorm';
-import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
-import { UserService } from './user/user.service';
 
 @Module({
   imports: [
@@ -31,7 +29,9 @@ import { UserService } from './user/user.service';
   providers: [AppService],
 })
 export class AppModule {
-  constructor(private readonly connection: Connection) {
+  constructor(
+    private readonly connection: Connection,
+  ) {
     // console.log(connection)
   }
 }

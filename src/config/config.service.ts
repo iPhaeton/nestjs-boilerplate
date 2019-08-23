@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import * as Joi from '@hapi/joi';
 import * as fs from 'fs';
-import {EnvConfig, ParsedEnvConfig} from './config.types';
+import {EnvConfig, ParsedEnvConfig, KnownEnvironment} from './config.types';
 
 export class ConfigService {
   private readonly envConfig: ParsedEnvConfig;
@@ -32,6 +32,10 @@ export class ConfigService {
 
   get(key: string): string | number {
     return this.envConfig[key];
+  }
+
+  getEnv(): KnownEnvironment {
+    return process.env.NODE_ENV as KnownEnvironment;
   }
 
   getDbHostname(): string {
