@@ -3,15 +3,4 @@ import { UserService } from "./user.service";
 import { User } from "./user.entity";
 
 @Controller('user')
-export class UserController {
-    constructor(private readonly userService: UserService) {}
-
-    @Post('register')
-    async create(
-        @Body()
-        user: User,
-    ) {
-        const createdUser = await this.userService.create(user);
-        return createdUser;
-    }
-}
+export class UserController {}
