@@ -6,7 +6,6 @@ export class AuthService {
     constructor(private readonly userService: UserService) {}
 
     async validateUser(email: string, password: string) {
-        console.log('------------')
         const user = await this.userService.findOne({where: {email}});
         if (user && user.password === password) {
             const {password, ...userData} = user;
