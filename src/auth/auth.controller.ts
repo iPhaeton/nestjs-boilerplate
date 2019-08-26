@@ -5,10 +5,11 @@ import { PasswordProvider } from "./password.provider";
 import { UserService } from "../user/user.service";
 import { User } from "../user/user.entity";
 import { UserDto } from "src/user/user.dto";
+import {AuthService} from './auth.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly userService: UserService) {}
+    constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
 
     @Post('register')
     @UsePipes(new ValidationPipe())
@@ -33,6 +34,12 @@ export class AuthController {
     async login(
         @Request() req,
     ) {
-        return req.user;
+        const {user} = req;
+        const token = await this.authService.createToken(user);
+        
+        return {
+            ...user,
+            token,
+        };
     }
 }
