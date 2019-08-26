@@ -18,8 +18,6 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
             const ctx = host.switchToHttp();
             const response = ctx.getResponse();
 
-            console.log(exception);
-
             response.status(HttpStatus.INTERNAL_SERVER_ERROR).json(exception);
         }
     }
