@@ -15,8 +15,7 @@ export class AuthService {
             } else {
                 const {password: encryptedPassword} = await PasswordProvider.encryptPassword(password, user.salt);
                 if (user && user.password === encryptedPassword) {
-                    const {password, salt, ...userData} = user;
-                    return userData;
+                    return this.userService.getUserDto(user);
                 } else {
                     return null;
                 }

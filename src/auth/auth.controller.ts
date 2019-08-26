@@ -4,6 +4,7 @@ import { RegisterDto } from "./auth.dto";
 import { PasswordProvider } from "./password.provider";
 import { UserService } from "../user/user.service";
 import { User } from "../user/user.entity";
+import { UserDto } from "src/user/user.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +15,7 @@ export class AuthController {
     async register(
         @Body()
         credentials: RegisterDto,
-    ) {
+    ): Promise<UserDto> {
         const {name, email, password: passwordSrting} = credentials;
         const passwordData = await PasswordProvider.encryptPassword(passwordSrting);
 
@@ -24,9 +25,7 @@ export class AuthController {
             ...passwordData,
         } as User);
     
-        const {password, salt, ...userData} = user;
-    
-        return userData;
+        return this.userService.getUserDto(user);
     }
 
     @UseGuards(AuthGuard('local'))
