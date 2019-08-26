@@ -12,8 +12,8 @@ export class PasswordProvider {
         return bytes.toString('hex');
     }
 
-    public static async encryptPassword(password: string) {
-        const salt = await this.getSalt();
+    public static async encryptPassword(password: string, withSalt?: string) {
+        const salt = withSalt ? withSalt : await this.getSalt();
         const bytes = await pbkdf2(password, salt, 10000, 512, 'sha512');
         return {password: bytes.toString('hex'), salt};
     }
