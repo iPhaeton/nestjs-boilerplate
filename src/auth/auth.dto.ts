@@ -12,3 +12,8 @@ export class RegisterDto {
     @IsString()
     readonly password: string;
 }
+
+export class JwtPayloadDto {
+    readonly id: number;
+    readonly email: number;
+}
