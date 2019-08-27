@@ -27,7 +27,7 @@ export class AuthController {
         const {name, email, password: passwordSrting, role, address} = credentials;
         const salt = this.configService.getSalt();
         const password = await PasswordProvider.encryptPassword(passwordSrting, salt);
-
+        
         const user = await this.userService.create({
             name,
             email,
