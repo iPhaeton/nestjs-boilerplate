@@ -22,7 +22,7 @@ export class AuthController {
         @Body()
         credentials: RegisterDto,
     ): Promise<UserDto> {
-        const {name, email, password: passwordSrting, role} = credentials;
+        const {name, email, password: passwordSrting, role, address} = credentials;
         const salt = this.configService.getSalt();
         const password = await PasswordProvider.encryptPassword(passwordSrting, salt);
 
@@ -31,6 +31,7 @@ export class AuthController {
             email,
             password,
             role,
+            address,
         } as User);
     
         return this.userService.getUserDto(user);

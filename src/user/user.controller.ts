@@ -13,7 +13,7 @@ export class UserController {
         @Param('id')
         id: number,
     ) {
-        const user = await this.userService.findOne({where: {id}, relations: ["role"]});
+        const user = await this.userService.findOne({where: {id}, relations: ['role', 'address']});
         return this.userService.getUserDto(user);
     }
 }
