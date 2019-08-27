@@ -4,12 +4,17 @@ import { RegisterDto } from "./auth.dto";
 import { PasswordProvider } from "./password.provider";
 import { UserService } from "../user/user.service";
 import { User } from "../user/user.entity";
-import { UserDto } from "src/user/user.dto";
+import { UserDto } from "../user/user.dto";
 import {AuthService} from './auth.service';
+import { ConfigService } from "../config/config.service";
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly userService: UserService, private readonly authService: AuthService) {}
+    constructor(
+        private readonly userService: UserService,
+        private readonly authService: AuthService,
+        private readonly configService: ConfigService
+    ) {}
 
     @Post('register')
     @UsePipes(new ValidationPipe())
@@ -18,12 +23,13 @@ export class AuthController {
         credentials: RegisterDto,
     ): Promise<UserDto> {
         const {name, email, password: passwordSrting} = credentials;
-        const passwordData = await PasswordProvider.encryptPassword(passwordSrting);
+        const salt = this.configService.getSalt();
+        const password = await PasswordProvider.encryptPassword(passwordSrting, salt);
 
         const user = await this.userService.create({
             name,
             email,
-            ...passwordData,
+            password,
         } as User);
     
         return this.userService.getUserDto(user);

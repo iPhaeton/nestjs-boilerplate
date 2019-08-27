@@ -13,7 +13,4 @@ export class User {
 
   @Column('text')
   password: string;
-
-  @Column('text')
-  salt: string;
 }

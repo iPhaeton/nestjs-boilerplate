@@ -21,7 +21,7 @@ export class UserService {
     }
 
     getUserDto(user: User): UserDto {
-        const {password, salt, ...userDto} = user;
+        const {password, ...userDto} = user;
         return userDto;
     }
 }

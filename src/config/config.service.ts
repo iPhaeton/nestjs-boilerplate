@@ -19,6 +19,7 @@ export class ConfigService {
       DB_PASSWORD: Joi.string().required(),
       DB_NAME: Joi.string().required(),
       JWT_SECRET: Joi.string().required(),
+      SALT: Joi.string().required(),
     });
 
     const { error, value: validatedEnvConfig } = Joi.validate(
@@ -61,5 +62,9 @@ export class ConfigService {
 
   getJwtSecret(): string {
     return this.get('JWT_SECRET') as string;
+  }
+
+  getSalt(): string {
+    return this.get('SALT') as string;
   }
 }
