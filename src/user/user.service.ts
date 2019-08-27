@@ -10,10 +10,18 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
+
+        @InjectRepository(Role)
+        private readonly roleRepository: Repository<Role>,
     ) {};
 
     async create(user: User): Promise<User> {
-        const createdUser = await this.userRepository.create(user);
+        const {role, ...userData} = user;
+        const existingRole = await this.roleRepository.findOne({where: {...role}});
+        const createdUser = await this.userRepository.create({
+            ...userData,
+            role: existingRole,
+        });
         return await this.userRepository.save(createdUser);
     }
 
