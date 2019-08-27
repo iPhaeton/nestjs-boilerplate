@@ -4,6 +4,7 @@ import { User } from "./user.entity";
 import { Repository, FindOneOptions } from "typeorm";
 import { UserDto } from "./user.dto";
 import { Role } from "../role/role.entity";
+import {getConnection} from "typeorm";
 
 @Injectable()
 export class UserService {
@@ -17,12 +18,19 @@ export class UserService {
 
     async create(user: User): Promise<User> {
         const {role, ...userData} = user;
-        const existingRole = await this.roleRepository.findOne({where: {...role}});
-        const createdUser = await this.userRepository.create({
-            ...userData,
-            role: existingRole,
+
+        const savedUser = await getConnection().transaction(async transactionalEntityManager => {
+            const existingRole = await transactionalEntityManager.findOne<Role>(Role, {where: {...role}});
+            const createdUser = await transactionalEntityManager.create(User, {
+                ...userData,
+                role: existingRole,
+            });
+
+            const savedUser = await transactionalEntityManager.save(createdUser);
+            return savedUser;
         });
-        return await this.userRepository.save(createdUser);
+        
+        return savedUser;
     }
 
     async findOne(options?: FindOneOptions<User>): Promise<User> {
