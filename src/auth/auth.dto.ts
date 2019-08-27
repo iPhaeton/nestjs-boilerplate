@@ -29,6 +29,14 @@ export class RegisterDto {
     readonly address: AddressDto;
 }
 
+export class LoginDto {
+    @ApiModelProperty()
+    readonly email: string;
+
+    @ApiModelProperty()
+    readonly password: string;
+}
+
 export class JwtPayloadDto {
     readonly id: number;
     readonly email: number;

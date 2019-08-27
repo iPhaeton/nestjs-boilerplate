@@ -1,12 +1,13 @@
 import { Controller, Post, UseGuards, Request, Body, UsePipes, ValidationPipe } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { RegisterDto } from "./auth.dto";
+import { RegisterDto, LoginDto } from "./auth.dto";
 import { PasswordProvider } from "./password.provider";
 import { UserService } from "../user/user.service";
 import { User } from "../user/user.entity";
-import { UserDto } from "../user/user.dto";
+import { UserDto, UserDtoWithToken } from "../user/user.dto";
 import {AuthService} from './auth.service';
 import { ConfigService } from "../config/config.service";
+import { ApiResponse } from "@nestjs/swagger";
 
 @Controller('auth')
 export class AuthController {
@@ -18,6 +19,7 @@ export class AuthController {
 
     @Post('register')
     @UsePipes(new ValidationPipe())
+    @ApiResponse({status: 200, description: 'User with relations', type: UserDto})
     async register(
         @Body()
         credentials: RegisterDto,
@@ -39,7 +41,9 @@ export class AuthController {
 
     @UseGuards(AuthGuard('local'))
     @Post('login')
+    @ApiResponse({status: 200, description: 'User with relations', type: UserDtoWithToken})
     async login(
+        @Body() credentials: LoginDto,
         @Request() req,
     ) {
         const {user} = req;

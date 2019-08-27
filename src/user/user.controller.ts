@@ -4,6 +4,10 @@ import { AuthGuard } from "@nestjs/passport";
 import { RolesGuard } from "../guards/roles.guard";
 import { RoleType } from "../role/role.types";
 import {Roles} from '../decorators/roles.decorator';
+import { ApiResponse } from "@nestjs/swagger";
+import { User } from "./user.entity";
+import { UserDto } from "./user.dto";
+import { RegisterDto } from "../auth/auth.dto";
 
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller('user')
@@ -12,6 +16,7 @@ export class UserController {
 
     @Get(':id')
     @Roles(RoleType.ADMIN)
+    @ApiResponse({status: 200, description: 'User with relations', type: User})
     async getUser(
         @Param('id')
         id: number,
