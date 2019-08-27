@@ -1,4 +1,5 @@
-import { IsEmail, IsString, Length, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsString, Length, IsNotEmpty, ValidateNested } from 'class-validator';
+import { RoleDto } from '../role/role.dto';
 
 export class RegisterDto {
     @IsNotEmpty()
@@ -11,6 +12,10 @@ export class RegisterDto {
     @Length(8)
     @IsString()
     readonly password: string;
+
+    @IsNotEmpty()
+    @ValidateNested()
+    readonly role: RoleDto;
 }
 
 export class JwtPayloadDto {
