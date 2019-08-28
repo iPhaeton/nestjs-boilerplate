@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { RoleType } from '../role/role.types';
 import {PasswordProvider} from '../auth/password.provider';
+import { getCredentials } from '../test/data.helper';
 jest.mock('../auth/password.provider');
 const sinon = require('sinon');
 
@@ -25,19 +26,7 @@ describe('AuthController', () => {
 
     describe('register', () => {
         it('should return a user data transfer object', async () => {
-            const password = '123456789';
-
-            const credentials = {
-                name: 'Ilya',
-                email: 'qqq@qqq.com',
-                password,
-                role: {
-                    type: RoleType.ADMIN,
-                },
-                address: {
-                    line: 'Minsk',
-                },
-            };
+            const credentials = getCredentials(RoleType.ADMIN);
 
             const result = {
                 id:1, 
@@ -58,7 +47,7 @@ describe('AuthController', () => {
 
             const user = await authController.register(credentials);
             
-            expect(encryptPasswordSpy).toHaveBeenCalledWith(password, salt);
+            expect(encryptPasswordSpy).toHaveBeenCalledWith(credentials.password, salt);
             expect(createSpy).toHaveBeenCalledWith({...credentials, password: encryptedPassword});
             expect(getUserDtoSpy).toHaveBeenCalledWith(createdUser);
             expect(user).toBe(result);
