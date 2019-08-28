@@ -11,9 +11,14 @@ import { JwtModule } from "@nestjs/jwt";
 import { User } from "../user/user.entity";
 import { Role } from "../role/role.entity";
 import { Address } from "../address/address.entity";
+import { TestUtils } from "../test/test-utils.helper";
+import {PasswordProvider} from '../auth/password.provider';
+import {omit} from 'ramda';
+jest.mock('../auth/password.provider');
 
 describe('Auth', () => {
     let authController: AuthController;
+    let testUtils: TestUtils;
 
     beforeEach(async () => {
         const module = await Test.createTestingModule({
@@ -44,17 +49,43 @@ describe('Auth', () => {
                 }),
             ],
             controllers: [AuthController],
-            providers: [AuthService]
+            providers: [AuthService, TestUtils],
         }).compile();
 
         authController = module.get<AuthController>(AuthController);
+        testUtils = module.get<TestUtils>(TestUtils);
+
+        await testUtils.givenEmptyDatabase();
+        await testUtils.givenRoles();
     });
+
+    // afterAll(async () => await testUtils.clearDatabase());
 
     describe('register', () => {
         it('should create a user in the database', async () => {
-            const credentials = getCredentials(RoleType.ADMIN);
-            const user = await authController.register(credentials);
-            console.log(user)
+            const encryptedPassword = '111';
+            jest.spyOn(PasswordProvider, 'encryptPassword').mockImplementation(async () => encryptedPassword);
+            const credentials = getCredentials(RoleType.ADMIN, '123456789');
+            const user: any = await authController.register(credentials);
+
+            expect(user.name).toBe(credentials.name);
+            expect(user.email).toBe(credentials.email);
+            expect(user.password).toBe(undefined);
+            expect(user.role.type).toBe(credentials.role.type);
+            expect(user.address.line).toBe(credentials.address.line);
+
+            const expectedDatabaseEntity = {
+                id: user.id,
+                name: credentials.name,
+                email: credentials.email,
+                password: encryptedPassword,
+                roleId: user.role.id,
+                addressId: user.address.id,
+            }
+
+            const users = await testUtils.findAll('public.user');
+
+            expect(users).toContainEqual(expectedDatabaseEntity);
         })
     })
 })

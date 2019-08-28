@@ -1,13 +1,13 @@
 import {RoleType} from '../role/role.types';
 
-export const getCredentials = (type: RoleType) => ({
+export const getCredentials = (type: RoleType, password?: string) => ({
     name: 'Ilya',
     email: 'qqq@qqq.com',
-    password: '123456789',
+    password,
     role: {
         type,
     },
     address: {
         line: 'Minsk',
     },
-})
+});

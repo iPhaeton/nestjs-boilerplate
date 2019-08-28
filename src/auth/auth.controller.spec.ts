@@ -26,7 +26,7 @@ describe('AuthController', () => {
 
     describe('register', () => {
         it('should return a user data transfer object', async () => {
-            const credentials = getCredentials(RoleType.ADMIN);
+            const credentials = getCredentials(RoleType.ADMIN, '123456789');
 
             const result = {
                 id:1, 
