@@ -13,7 +13,6 @@ import { Role } from "../role/role.entity";
 import { Address } from "../address/address.entity";
 import { TestUtils } from "../test/test-utils.helper";
 import {PasswordProvider} from '../auth/password.provider';
-import {omit} from 'ramda';
 jest.mock('../auth/password.provider');
 
 describe('Auth', () => {
