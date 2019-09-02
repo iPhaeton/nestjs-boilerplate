@@ -7,12 +7,7 @@ export class ConfigService {
   private readonly envConfig: ParsedEnvConfig;
 
   constructor(filePath: string) {
-    const config = dotenv.parse(fs.readFileSync(filePath));
-    this.envConfig = this.validateInput(config);
-  }
-
-  private validateInput(envConfig: EnvConfig): ParsedEnvConfig {
-    const envVarsSchema: Joi.ObjectSchema = Joi.object({
+    const schema = {
       DB_HOSTNAME: Joi.string().required(),
       DB_PORT: Joi.number().required(),
       DB_USERNAME: Joi.string().required(),
@@ -20,7 +15,23 @@ export class ConfigService {
       DB_NAME: Joi.string().required(),
       JWT_SECRET: Joi.string().required(),
       SALT: Joi.string().required(),
-    });
+    };
+
+    let config = {};
+    try {
+      config = dotenv.parse(fs.readFileSync(filePath));
+    } catch (err) {
+      console.log(`Cannot get variables from ${filePath}. Getting variables from process.env`);
+    }
+
+    console.log(`WARNING: Environment varibles from process.env override environment variables from ${filePath}`);
+    config = Object.keys(schema).reduce((res, key) => (process.env[key] ? {...res, [key]: process.env[key]} : res), config);
+    
+    this.envConfig = this.validateInput(config, schema);
+  }
+
+  private validateInput(envConfig: EnvConfig, schema: any): ParsedEnvConfig {
+    const envVarsSchema: Joi.ObjectSchema = Joi.object(schema);
 
     const { error, value: validatedEnvConfig } = Joi.validate(
       envConfig,
