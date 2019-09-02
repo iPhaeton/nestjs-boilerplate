@@ -8,6 +8,7 @@ export class ConfigService {
 
   constructor(filePath: string) {
     const schema = {
+      PORT: Joi.number().required(),
       DB_HOSTNAME: Joi.string().required(),
       DB_PORT: Joi.number().required(),
       DB_USERNAME: Joi.string().required(),
@@ -49,6 +50,10 @@ export class ConfigService {
 
   getEnv(): KnownEnvironment {
     return process.env.NODE_ENV as KnownEnvironment;
+  }
+
+  getPort(): number {
+    return this.get('PORT') as number;
   }
 
   getDbHostname(): string {

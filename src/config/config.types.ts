@@ -6,4 +6,4 @@ export interface ParsedEnvConfig {
     [key: string]: string | number;
 }
 
-export type KnownEnvironment = 'local' | 'test' | 'development' | 'production';
+export type KnownEnvironment = 'local' | 'test' | 'development' | 'production';``
