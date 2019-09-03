@@ -17,7 +17,7 @@ spec:
             - containerPort: 3000
           env:
             - name: PORT
-              value: 3000
+              value: "3000"
             - name: DB_HOSTNAME
               valueFrom: 
                 secretKeyRef:
@@ -57,7 +57,7 @@ spec:
           image: gcr.io/cloudsql-docker/gce-proxy:1.11
           command: ["./cloud_sql_proxy",
                     "-instances=nestjs-auth-251708:us-central1:auth-db=tcp:5432",
-                    "-credential_file=key.json"]
+                    "-credential_file=/secrets/cloudsql/key.json"]
           volumeMounts: 
             - name: cloudsql-volume
               mountPath: /secrets/cloudsql
