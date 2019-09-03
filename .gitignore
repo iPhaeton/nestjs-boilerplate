@@ -34,4 +34,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 cloud_sql_proxy
-nestjs-auth-251708-346cdb9a8731.json
+key.json
