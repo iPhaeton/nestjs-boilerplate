@@ -1,0 +1,41 @@
+version: 2
+jobs:
+  install-node-packages:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - restore-cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+      - checkout
+      - run: git gc
+      - save-cache:
+          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - .git
+      - restore-cache:
+          keys:
+            v1-yarn-cache-{{ checksum "yarn.lock" }}
+            v1-yarn-cache
+      - run: yarn install
+      - save-cache:
+          key: v1-yarn-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - ./node_modules
+  build:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - restore-cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+      - checkout
+      - restore-cache:
+          keys:
+            v1-yarn-cache-{{ checksum "yarn.lock" }}
+            v1-yarn-cache
+      - run: yarn build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - dist
