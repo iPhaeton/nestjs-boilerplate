@@ -14,28 +14,32 @@ export class UserService {
         private readonly userRepository: Repository<User>,
     ) {};
 
+    createInDatabase(user: User) {
+        return async (transactionalEntityManager) => {
+            const {role, address, ...userData} = user;
+    
+            const existingRole = await transactionalEntityManager.findOne(Role, {where: {...role}});
+        
+            let savedAddress = await transactionalEntityManager.findOne(Address, {where: {...address}});
+            if (!savedAddress) {
+                const createdAddress = await transactionalEntityManager.create(Address, address);
+                savedAddress = await transactionalEntityManager.save(createdAddress);
+            };
+    
+            const createdUser = await transactionalEntityManager.create(User, {
+                ...userData,
+                role: existingRole,
+                address: savedAddress,
+            });
+    
+            const savedUser = await transactionalEntityManager.save(createdUser);
+            return savedUser;
+        }
+    } 
+
     async create(user: User): Promise<User> {
         try {
-            const {role, address, ...userData} = user;
-
-            const savedUser = await getConnection().transaction(async transactionalEntityManager => {
-                const existingRole = await transactionalEntityManager.findOne(Role, {where: {...role}});
-    
-                let savedAddress = await transactionalEntityManager.findOne(Address, {where: {...address}});
-                if (!savedAddress) {
-                    const createdAddress = await transactionalEntityManager.create(Address, address);
-                    savedAddress = await transactionalEntityManager.save(createdAddress);
-                };
-    
-                const createdUser = await transactionalEntityManager.create(User, {
-                    ...userData,
-                    role: existingRole,
-                    address: savedAddress,
-                });
-    
-                const savedUser = await transactionalEntityManager.save(createdUser);
-                return savedUser;
-            });
+            const savedUser = await getConnection().transaction(this.createInDatabase(user));
             
             return savedUser;
         } catch(err) {

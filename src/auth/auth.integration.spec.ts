@@ -58,8 +58,6 @@ describe('Auth', () => {
         await testUtils.givenRoles();
     });
 
-    // afterAll(async () => await testUtils.clearDatabase());
-
     describe('register', () => {
         it('should create a user in the database', async () => {
             const encryptedPassword = '111';
