@@ -1,0 +1,1 @@
+./cloud_sql_proxy -instances=nestjs-auth-251708:us-central1:auth-db=tcp:5432 -credential_file=key.json

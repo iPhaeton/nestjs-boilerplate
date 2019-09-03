@@ -1,0 +1,69 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nestjs-boilerplate
+  labels:
+    app: nestjs-boilerplate
+spec:
+  template:
+    metadata:
+      labels:
+        app: nestjs-boilerplate
+    spec:
+      containers:
+        - name: nestjs-boilerplate
+          image: gcr.io/nestjs-auth-251708/nestjs-boilerplate
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: 3000
+            - name: DB_HOSTNAME
+              valueFrom: 
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: DB_HOSTNAME
+            - name: DB_PORT
+              valueFrom: 
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: DB_PORT
+            - name: DB_USERNAME
+              valueFrom: 
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom: 
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom: 
+                secretKeyRef:
+                  name: cloudsql-db-credentials
+                  key: DB_NAME
+            - name: JWT_SECRET
+              valueFrom: 
+                secretKeyRef:
+                  name: security
+                  key: JWT_SECRET
+            - name: SALT
+              valueFrom: 
+                secretKeyRef:
+                  name: security
+                  key: SALT
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.11
+          command: ["./cloud_sql_proxy",
+                    "-instances=nestjs-auth-251708:us-central1:auth-db=tcp:5432",
+                    "-credential_file=key.json"]
+          volumeMounts: 
+            - name: cloudsql-volume
+              mountPath: /secrets/cloudsql
+              readOnly: true
+      volumes:
+        - name: cloudsql-volume
+          secret:
+            secretName: cloudsql-instance-credentials
+          
