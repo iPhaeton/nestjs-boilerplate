@@ -36,24 +36,22 @@ jobs:
           keys:
             - v1-yarn-cache-{{ checksum "yarn.lock" }}
             - v1-yarn-cache
-      - run:
-          name: Create test database
-          command: -u postgres psql -c 'create database auth_db_test;'
       - run: yarn test
 
-  # test-e2e:
-  #   docker:
-  #     - image: circleci/node:12
-  #   steps:
-  #     - restore-cache:
-  #         keys:
-  #           - source-v1-{{ .Branch }}-{{ .Revision }}
-  #     - checkout
-  #     - restore-cache:
-  #         keys:
-  #           - v1-yarn-cache-{{ checksum "yarn.lock" }}
-  #           - v1-yarn-cache
-  #     - run: yarn test:e2e
+  test-e2e:
+    docker:
+      - image: circleci/node:12
+      - image: circleci/postgres:11
+    steps:
+      - restore-cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+      - checkout
+      - restore-cache:
+          keys:
+            - v1-yarn-cache-{{ checksum "yarn.lock" }}
+            - v1-yarn-cache
+      - run: yarn test:e2e
       
   build:
     machine:
@@ -111,9 +109,9 @@ workflows:
       - test:
           requires:
             - install-node-packages
-      # - test-e2e:
-      #     requires:
-      #       - install-node-packages
+      - test-e2e:
+          requires:
+            - install-node-packages
       - build:
           filters:
             branches:
@@ -121,8 +119,7 @@ workflows:
                 - master
           requires:
             - test
-            # - test-e2e
-            # - install-node-packages
+            - test-e2e
       - deploy:
           filters:
             branches:
