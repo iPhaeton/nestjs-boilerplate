@@ -53,8 +53,8 @@ jobs:
       
   build:
     docker:
-      - image: google/cloud-sdk
       - image: circleci/node:12
+      - image: google/cloud-sdk
     steps:
       - restore-cache:
           keys:
