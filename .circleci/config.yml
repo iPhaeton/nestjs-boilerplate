@@ -92,7 +92,6 @@ jobs:
       - run:
           name: Deploy
           command: |
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
             kubectl patch deployment nestjs-boilerplate -f deployment.yaml\
 
 workflows:
