@@ -54,9 +54,9 @@ jobs:
   build:
     docker:
       - image: circleci/node:12
-        auth:
-          username: _json_key
-          password: $GCLOUD_SERVICE_KEY
+        # auth:
+        #   username: _json_key
+        #   password: $GCLOUD_SERVICE_KEY
     steps:
       - restore-cache:
           keys:
