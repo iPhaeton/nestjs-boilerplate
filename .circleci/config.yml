@@ -23,33 +23,33 @@ jobs:
           paths:
             - ./node_modules
 
-  test:
-    docker:
-      - image: circleci/node:12
-    steps:
-      - restore-cache:
-          keys:
-            - source-v1-{{ .Branch }}-{{ .Revision }}
-      - checkout
-      - restore-cache:
-          keys:
-            - v1-yarn-cache-{{ checksum "yarn.lock" }}
-            - v1-yarn-cache
-      - run: yarn test
+  # test:
+  #   docker:
+  #     - image: circleci/node:12
+  #   steps:
+  #     - restore-cache:
+  #         keys:
+  #           - source-v1-{{ .Branch }}-{{ .Revision }}
+  #     - checkout
+  #     - restore-cache:
+  #         keys:
+  #           - v1-yarn-cache-{{ checksum "yarn.lock" }}
+  #           - v1-yarn-cache
+  #     - run: yarn test
 
-  test-e2e:
-    docker:
-      - image: circleci/node:12
-    steps:
-      - restore-cache:
-          keys:
-            - source-v1-{{ .Branch }}-{{ .Revision }}
-      - checkout
-      - restore-cache:
-          keys:
-            - v1-yarn-cache-{{ checksum "yarn.lock" }}
-            - v1-yarn-cache
-      - run: yarn test:e2e
+  # test-e2e:
+  #   docker:
+  #     - image: circleci/node:12
+  #   steps:
+  #     - restore-cache:
+  #         keys:
+  #           - source-v1-{{ .Branch }}-{{ .Revision }}
+  #     - checkout
+  #     - restore-cache:
+  #         keys:
+  #           - v1-yarn-cache-{{ checksum "yarn.lock" }}
+  #           - v1-yarn-cache
+  #     - run: yarn test:e2e
       
   build:
     docker:
@@ -109,20 +109,21 @@ workflows:
   main:
     jobs:
       - install-node-packages
-      - test:
-          requires:
-            - install-node-packages
-      - test-e2e:
-          requires:
-            - install-node-packages
+      # - test:
+      #     requires:
+      #       - install-node-packages
+      # - test-e2e:
+      #     requires:
+      #       - install-node-packages
       - build:
           filters:
             branches:
               only:
                 - master
           requires:
-            - test
-            - test-e2e
+            # - test
+            # - test-e2e
+            - install-node-packages
       - deploy:
           filters:
             branches:
