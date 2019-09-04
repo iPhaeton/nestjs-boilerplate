@@ -92,7 +92,7 @@ jobs:
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run:
           name: Install jubectl
-          command: gcloud components install kubectl
+          command: apt-get install kubectl
       - run:
           name: Deploy
           command: |
