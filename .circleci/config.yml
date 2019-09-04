@@ -102,4 +102,31 @@ jobs:
           name: Deploy
           command: |
             sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
-            kubectl patch deployment nestjs-boilerplate -f deployment.yaml
+            kubectl patch deployment nestjs-boilerplate -f deployment.yaml\
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - install-node-packages
+      - test:
+          requires:
+            - install-node-packages
+      - test-e2e:
+          requires:
+            - install-node-packages
+      - build:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - test
+            - test-e2e
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - build
