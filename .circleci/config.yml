@@ -52,7 +52,8 @@ jobs:
   #     - run: yarn test:e2e
       
   build:
-    machine: true
+    machine:
+      image: circleci/classic:latest
     steps:
       - restore-cache:
           keys:
