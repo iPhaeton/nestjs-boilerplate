@@ -77,8 +77,8 @@ jobs:
           command: gcloud docker -- push gcr.io/nestjs-auth-251708/nestjs-boilerplate:$CIRCLE_SHA1
   
   deploy:
-    machine:
-      image: circleci/classic:latest
+    docker:
+      - image: google/cloud-sdk
     steps:
       - restore-cache:
           keys:
@@ -93,7 +93,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
+            chmod +x /home/ubuntu/.kube
             kubectl patch deployment nestjs-boilerplate -p '{"spec":{"template":{"spec":{"containers":[{"name":"nestjs-boilerplate","image":"gcr.io/nestjs-auth-251708/nestjs-boilerplate:'"$CIRCLE_SHA1"'"}]}}}}'
 
 workflows:
