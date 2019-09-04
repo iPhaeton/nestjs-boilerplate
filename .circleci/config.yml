@@ -92,7 +92,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            kubectl patch deployment docker-hello-google -p '{"spec":{"template":{"spec":{"containers":[{"name":"nestjs-boilerplate","image":"gcr.io/nestjs-auth-251708/nestjs-boilerplate:'"$CIRCLE_SHA1"'"}]}}}}'
+            kubectl patch deployment nestjs-boilerplate -p '{"spec":{"template":{"spec":{"containers":[{"name":"nestjs-boilerplate","image":"gcr.io/nestjs-auth-251708/nestjs-boilerplate:'"$CIRCLE_SHA1"'"}]}}}}'
 
 workflows:
   version: 2
