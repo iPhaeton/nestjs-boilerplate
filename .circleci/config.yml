@@ -91,9 +91,11 @@ jobs:
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run:
+          name: Install jubectl
+          command: gcloud components install kubectl
+      - run:
           name: Deploy
           command: |
-            chmod +x /home/ubuntu/.kube
             kubectl patch deployment nestjs-boilerplate -p '{"spec":{"template":{"spec":{"containers":[{"name":"nestjs-boilerplate","image":"gcr.io/nestjs-auth-251708/nestjs-boilerplate:'"$CIRCLE_SHA1"'"}]}}}}'
 
 workflows:
