@@ -54,6 +54,9 @@ jobs:
   build:
     docker:
       - image: circleci/node:12
+        auth:
+          username: _json_key
+          password: $GCLOUD_SERVICE_KEY
     steps:
       - restore-cache:
           keys:
@@ -63,10 +66,40 @@ jobs:
           keys:
             v1-yarn-cache-{{ checksum "yarn.lock" }}
             v1-yarn-cache
-      - run: yarn build
+      - run:
+          name: Authentication
+          command: |
+            sudo gcloud --quiet components update
+            echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+      - run: 
+          name: Build
+          command: docker build . -t gcr.io/nestjs-auth-251708/nestjs-boilerplate:latest
+      - run:
+          name: Push
+          command: docker push gcr.io/nestjs-auth-251708/nestjs-boilerplate
       - persist_to_workspace:
           root: .
           paths:
             - dist
-
-
+  
+  deploy:
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - restore-cache:
+          keys:
+            - source-v1-{{ .Branch }}-{{ .Revision }}
+      - checkout
+      - run:
+          name: Authentication
+          command: |
+            echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
+            gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
+            gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
+      - run:
+          name: Deploy
+          command: |
+            sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
+            kubectl patch deployment nestjs-boilerplate -f deployment.yaml
