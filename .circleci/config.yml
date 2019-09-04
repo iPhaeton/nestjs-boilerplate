@@ -52,6 +52,7 @@ jobs:
   #     - run: yarn test:e2e
       
   build:
+    machine: true
     docker:
       - image: google/cloud-sdk
     steps:
