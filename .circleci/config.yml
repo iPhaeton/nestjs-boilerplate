@@ -53,10 +53,7 @@ jobs:
       
   build:
     docker:
-      - image: circleci/node:12
-        # auth:
-        #   username: _json_key
-        #   password: $GCLOUD_SERVICE_KEY
+      - image: google/cloud-sdk
     steps:
       - restore-cache:
           keys:
@@ -67,13 +64,8 @@ jobs:
             - v1-yarn-cache-{{ checksum "yarn.lock" }}
             - v1-yarn-cache
       - run:
-          name: Install Google Cloud SDK
-          command: |
-            sudo apt-get update && sudo apt-get install google-cloud-sdk
-      - run:
           name: Authentication
           command: |
-            sudo gcloud --quiet components update
             echo $GCLOUD_SERVICE_KEY | gcloud auth activate-service-account --key-file=-
             gcloud --quiet config set project ${GOOGLE_PROJECT_ID}
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
