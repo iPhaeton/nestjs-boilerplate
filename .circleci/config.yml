@@ -70,10 +70,10 @@ jobs:
             gcloud --quiet config set compute/zone ${GOOGLE_COMPUTE_ZONE}
       - run: 
           name: Build
-          command: docker build . -t gcr.io/nestjs-auth-251708/nestjs-boilerplate:latest
+          command: docker build . -t gcr.io/nestjs-auth-251708/nestjs-boilerplate:$CIRCLE_SHA1
       - run:
           name: Push
-          command: gcloud docker -- push gcr.io/nestjs-auth-251708/nestjs-boilerplate:latest
+          command: gcloud docker -- push gcr.io/nestjs-auth-251708/nestjs-boilerplate:$CIRCLE_SHA1
   
   deploy:
     docker:
@@ -92,7 +92,7 @@ jobs:
       - run:
           name: Deploy
           command: |
-            kubectl patch deployment nestjs-boilerplate -f deployment.yaml\
+            kubectl patch deployment docker-hello-google -p '{"spec":{"template":{"spec":{"containers":[{"name":"nestjs-boilerplate","image":"gcr.io/nestjs-auth-251708/nestjs-boilerplate:'"$CIRCLE_SHA1"'"}]}}}}'
 
 workflows:
   version: 2
