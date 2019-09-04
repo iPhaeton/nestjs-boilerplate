@@ -36,6 +36,9 @@ jobs:
           keys:
             - v1-yarn-cache-{{ checksum "yarn.lock" }}
             - v1-yarn-cache
+      - run:
+          name: Create test database
+          command: -u postgres psql -c 'create database auth_db_test;'
       - run: yarn test
 
   # test-e2e:
