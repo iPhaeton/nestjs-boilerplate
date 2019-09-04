@@ -73,7 +73,7 @@ jobs:
           command: docker build . -t gcr.io/nestjs-auth-251708/nestjs-boilerplate:latest
       - run:
           name: Push
-          command: docker push gcr.io/nestjs-auth-251708/nestjs-boilerplate
+          command: gcloud docker -- push gcr.io/nestjs-auth-251708/nestjs-boilerplate
       - persist_to_workspace:
           root: .
           paths:
