@@ -52,9 +52,9 @@ jobs:
   #     - run: yarn test:e2e
       
   build:
-    machine: true
     docker:
       - image: google/cloud-sdk
+      - image: circleci/node:12
     steps:
       - restore-cache:
           keys:
