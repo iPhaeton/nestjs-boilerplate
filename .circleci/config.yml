@@ -74,10 +74,6 @@ jobs:
       - run:
           name: Push
           command: gcloud docker -- push gcr.io/nestjs-auth-251708/nestjs-boilerplate
-      - persist_to_workspace:
-          root: .
-          paths:
-            - dist
   
   deploy:
     docker:
